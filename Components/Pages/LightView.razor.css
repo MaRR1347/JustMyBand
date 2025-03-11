@@ -10,6 +10,9 @@
     border: 0;
     border-radius: 5px;
 }
+.flex {
+    display: flex;
+}
 
 /*----- Bank -----*/
 select {
@@ -131,7 +134,13 @@ option:hover {
         background-color: #555;
     }
 
-/*--------------MIDI--------------*/
+/*--------------  SEQUENCE  --------------*/
+
+
+
+
+
+/*--------------  MIDI  --------------*/
 #midi-devices {
     border: 1px solid #444;
     width: 350px;

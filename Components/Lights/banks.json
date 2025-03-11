@@ -8,30 +8,21 @@
         "Name": "\u015Bwiat\u0142o 1",
         "xPos": 423,
         "yPos": 73,
-        "startCh": 1,
-        "rCh": 1,
-        "gCh": 2,
-        "bCh": 3
+        "startCh": 1
       },
       {
         "Id": 1,
-        "Name": "Nowe \u015Bwiat\u0142o",
-        "xPos": 76,
+        "Name": "\u015Bwiat\u0142o 2",
+        "xPos": 108,
         "yPos": 130,
-        "startCh": 1,
-        "rCh": 1,
-        "gCh": 2,
-        "bCh": 3
+        "startCh": 1
       },
       {
         "Id": 2,
-        "Name": "Nowe \u015Bwiat\u0142o",
-        "xPos": 696,
-        "yPos": 149,
-        "startCh": 1,
-        "rCh": 1,
-        "gCh": 2,
-        "bCh": 3
+        "Name": "\u015Awiat\u0142o 3",
+        "xPos": 763,
+        "yPos": 176,
+        "startCh": 1
       }
     ]
   },
@@ -44,20 +35,14 @@
         "Name": "light0",
         "xPos": 240,
         "yPos": 100,
-        "startCh": 1,
-        "rCh": 1,
-        "gCh": 2,
-        "bCh": 3
+        "startCh": 1
       },
       {
         "Id": 1,
         "Name": "light2",
         "xPos": 445,
         "yPos": 100,
-        "startCh": 1,
-        "rCh": 1,
-        "gCh": 2,
-        "bCh": 3
+        "startCh": 1
       }
     ]
   }

@@ -12,19 +12,20 @@
     }
 </select>
 
-
-<div class="checkbox-wrapper-22">
-    <label class="switch">
-        <input type="checkbox" @bind=EditLightMode />
-        <div class="slider round"></div>
-    </label>
-</div>
-<section id="lights-preview">
+<section class="flex">
+    <div class="checkbox-wrapper-22">
+        <label class="switch">
+            <input type="checkbox" @bind=EditLightMode />
+            <div class="slider round"></div>
+        </label>
+    </div>
     @if (EditLightMode)
     {
         <button @onclick="() => AddLight()">Nowe światło</button>
     }
+</section>
 
+<section id="lights-preview">
     @if (CurrentBank != null)
     {
         @if (CurrentBank.Lights != null)
@@ -77,6 +78,7 @@
     }
 }
 
+<section class="flex">
 <div class="checkbox-wrapper-22">
     <label class="switch">
         <input type="checkbox" @bind=EditPresetsMode />
@@ -84,9 +86,10 @@
     </label>
 </div>
 @if (EditPresetsMode)
-{
-    <button @onclick="AddPreset" class="normal-button">Dodaj Preset</button>
-}
+    {
+        <button @onclick="AddPreset" class="normal-button">Dodaj Preset</button>
+    }
+</section>
 <section id="preset-container">
     @if (PresetsList.Count > 0)
     {
@@ -100,9 +103,11 @@
             {
                 <section class="@((CurrentPreset== preset)?"preset-block preset-block-active":"preset-block")" @onclick="() => SelectPreset(preset.Id)">
                     <input type="text" @bind-value=preset.Name @bind-value:event="oninput" @onchange="() => SavePresetsInfo(preset.Id, preset.Name)" />
-                    <button @onclick="() => RemovePreset(preset)" class="remove-preset">x</button>
-                    <button @onclick="() => ChangePresetsOrder(preset.Id, 0)" class="preview-next-preset"> &lt </button>
-                    <button @onclick="() => ChangePresetsOrder(preset.Id, 1)" class="preview-next-preset"> &gt </button>
+                    <section class="flex">
+                        <button @onclick="() => RemovePreset(preset)" class="remove-preset">x</button>
+                        <button @onclick="() => ChangePresetsOrder(preset.Id, 0)" class="preview-next-preset"> &lt </button>
+                        <button @onclick="() => ChangePresetsOrder(preset.Id, 1)" class="preview-next-preset"> &gt </button>
+                    </section>
                 </section>
             }
         }
@@ -113,14 +118,14 @@
     }
 </section>
 
+<div class="checkbox-wrapper-22">
+    <label class="switch">
+        <input type="checkbox" @bind=EditSequenceMode />
+        <span class="slider round"></span>
+    </label>
+</div>
 <section id="sequence-container">
     <section id="sequence-elements">
-        <div class="checkbox-wrapper-22">
-            <label class="switch">
-                <input type="checkbox" @bind=EditSequenceMode />
-                <span class="slider round"></span>
-            </label>
-        </div>
         @if (EditSequenceMode)
         {
             <label>Zapętla się <input type="checkbox" @bind="LoopPreset" /></label>
@@ -132,68 +137,66 @@
                     <li @onclick='() => AddToSequence(0, light.Id, "#000000")'>@light.Name</li>
                 }
             </ul>
-            <section id="sequence-tree">
-                @if (SequenceList.Count > 0)
+        }
+    </section>
+    <section id="sequence-tree">
+        @if (EditSequenceMode && SequenceList.Count > 0)
+        {
+            <ul>
+                @foreach (var seqEl in SequenceList)
                 {
-                    <ul>
-                        @foreach (var seqEl in SequenceList)
-                        {
-                            <li>
-                                <div>
-                                    @if (seqEl.Type == 0)
-                                    {
-                                        <p>
-                                            @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
-                                            <input type="color" @bind-value="@seqEl.Color" />
-                                        </p>
-                                    }
-                                    else if (seqEl.Type == 1)
-                                    {
-                                        <p>Czekaj: <input @bind-value=seqEl.Duration type="number" />ms</p>
-                                    }
-                                    else
-                                    {
-                                        <p>Fade: <input @bind-value=seqEl.Duration type="number" />ms</p>
-                                    }
-                                    <button @onclick="() => RemoveSequenceElement(seqEl)">x</button>
-                                    <button @onclick='() => ChangeSequenceOrder(seqEl, 0)'> &lt</button>
-                                    <button @onclick='() => ChangeSequenceOrder(seqEl, 1)'> &gt</button>
-                                </div>
-                            </li>
-                        }
-                    </ul>
+                    <li>
+                        <div>
+                            @if (seqEl.Type == 0)
+                            {
+                                <p>
+                                    @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
+                                    <input type="color" @bind="@seqEl.Color" />
+                                </p>
+                            }
+                            else if (seqEl.Type == 1)
+                            {
+                                <p>Czekaj: <input @bind-value=seqEl.Duration type="number" />ms</p>
+                            }
+                            else
+                            {
+                                <p>Fade: <input @bind-value=seqEl.Duration type="number" />ms</p>
+                            }
+                            <button @onclick="() => RemoveSequenceElement(seqEl)">x</button>
+                            <button @onclick='() => ChangeSequenceOrder(seqEl, 0)'> &lt</button>
+                            <button @onclick='() => ChangeSequenceOrder(seqEl, 1)'> &gt</button>
+                        </div>
+                    </li>
                 }
-                <button @onclick="() => SaveSequence()" class="normal-button">Zapisz</button>
-            </section>
+            </ul>
+            <button @onclick="() => SaveSequence()" class="normal-button">Zapisz</button>
         }
         else
         {
-            <section id="sequence-tree">
-                <ul>
-                    @foreach (var seqEl in SequenceList)
-                    {
-                        <li>
-                            <div>
-                                @if (seqEl.Type == 0)
-                                {
-                                    <p>
-                                        @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
-                                        <span class="color-preview" style="background-color: @seqEl.Color"> </span>
-                                    </p>
-                                }
-                                else if (seqEl.Type == 1)
-                                {
-                                    <p>Czekaj: @seqEl.Duration</p>
-                                }
-                                else
-                                {
-                                    <p>Fade: @seqEl.Duration </p>
-                                }
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </section>
+            <ul>
+                @foreach (var seqEl in SequenceList)
+                {
+                    <li>
+                        <div>
+                            @if (seqEl.Type == 0)
+                            {
+                                <p>
+                                    @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
+                                    <span class="color-preview" style="background-color: @seqEl.Color"> </span>
+                                </p>
+                            }
+                            else if (seqEl.Type == 1)
+                            {
+                                <p>Czekaj: @seqEl.Duration</p>
+                            }
+                            else
+                            {
+                                <p>Fade: @seqEl.Duration </p>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
         }
     </section>
 </section>
@@ -315,32 +318,45 @@
                 switch (_seqEl.Type)
                 {
                     case 0:
+                        Console.WriteLine("ŚWIAAAAAAATŁOOOOOOŚŚĆ");
                         Light _light = CurrentBank.Lights.Find((item) => item.Id == _seqEl.LightId);
+
+
+                        int _mCh = _light.startCh + 3;
+
+                        if (_seqEl.Color == "#000000")
+                        {
+                            sendToDMX(_mCh, 0);
+                            break;
+                        }
 
                         int _rCh = _light.startCh;
                         int _gCh = _light.startCh + 1;
                         int _bCh = _light.startCh + 2;
-                        int _mCh = _light.startCh + 3;
 
-                        (int r, int g, int b) = HexToRgb(_seqEl.Color);
+                        (byte r, byte g, byte b) = HexToRgb(_seqEl.Color);
 
                         sendToDMX(_mCh, 255);
-                        Task.Delay(25);
+                        await Task.Delay(15);
                         sendToDMX(_rCh, r);
-                        Task.Delay(25);
+                        await Task.Delay(15);
                         sendToDMX(_gCh, g);
-                        Task.Delay(25);
+                        await Task.Delay(15);
                         sendToDMX(_bCh, b);
-                        Console.WriteLine("wysyla światło");
-                                                    
+                        Console.WriteLine("wysyłano do świateł");
 
                         break;
+
                     case 1:
-                        Console.WriteLine("case 1");
+                        Console.WriteLine("WAAAAAAAAAAAAAIT");
+                        await Task.Delay(_seqEl.Duration);
                         break;
+
                     case 2:
-                        Console.WriteLine("case 2");
-                        break;                        
+                        Console.WriteLine("FAAAAADEEEEEEEEEEEEEE");
+                        Fade(_preset, _seqEl, _seqEl.Duration);
+                        await Task.Delay(_seqEl.Duration);
+                        break;
                 }
             }
         }
@@ -350,7 +366,8 @@
         string msg = ch + "c" + val + "v";
         SerialPort.SendDataToArduino(msg);
     }
-    static (int, int, int) HexToRgb(string hex)
+
+    static (byte, byte, byte) HexToRgb(string hex)
     {
         if (hex.StartsWith("#"))
             hex = hex.Substring(1);
@@ -358,11 +375,54 @@
         if (hex.Length != 6)
             throw new ArgumentException("Invalid HEX color format");
 
-        int r = Convert.ToInt32(hex.Substring(0, 2), 16);
-        int g = Convert.ToInt32(hex.Substring(2, 2), 16);
-        int b = Convert.ToInt32(hex.Substring(4, 2), 16);
+        byte r = Convert.ToByte(hex.Substring(0, 2), 16);
+        byte g = Convert.ToByte(hex.Substring(2, 2), 16);
+        byte b = Convert.ToByte(hex.Substring(4, 2), 16);
 
         return (r, g, b);
+    }
+
+    private static async void Fade(Preset _preset, SequenceElement _seqEl, int _duration)
+    {
+        SequenceElement prevCommand;
+        prevCommand = _preset.Commands[_preset.Commands.IndexOf(_seqEl) - 1];
+        if (prevCommand.Type != 0)
+            prevCommand = _preset.Commands[_preset.Commands.IndexOf(_seqEl) - 2];
+
+        Light _light = CurrentBank.Lights.Find((item) => item.Id == prevCommand.LightId);
+
+        if (_light == null) return;
+        int _rCh = _light.startCh;
+        int _gCh = _light.startCh + 1;
+        int _bCh = _light.startCh + 2;
+        int _mCh = _light.startCh + 3;
+
+
+        string prevColor = prevCommand.Color;
+        string nextColor = _preset.Commands[_preset.Commands.IndexOf(_seqEl) + 1].Color;
+
+        (byte r1, byte g1, byte b1) = HexToRgb(prevColor);
+        (byte r2, byte g2, byte b2) = HexToRgb(nextColor);
+
+        float rStep = ((float)(r2 - r1) / _duration * 102);
+        float gStep = ((float)(g2 - g1) / _duration * 102);
+        float bStep = ((float)(b2 - b1) / _duration * 102);
+
+        sendToDMX(_mCh, 50);
+        while (_duration > 0)
+        {
+            r1 += (byte)rStep;
+            g1 += (byte)gStep;
+            b1 += (byte)bStep;
+            sendToDMX(_rCh, r1);
+            await Task.Delay(20);
+            sendToDMX(_gCh, g1);
+            await Task.Delay(20);
+            sendToDMX(_bCh, b1);
+            await Task.Delay(20);
+            _duration -= 100;
+            Console.WriteLine(_duration);
+        }
     }
 
     //------------------------------------------   MIDI READ   ---------------------------------------------
@@ -371,32 +431,22 @@
     public static string MsgFromArduino = "";
     public string MsgToArduino = "";
     public static SerialPortService? SerialPort;
+    public static bool IsConnected = false;
     public static int GotMsgDiode = 0;
 
     protected async Task ConnectToArduino()
     {
-        SerialPort = new SerialPortService("COM" + COMPort);
-        Console.WriteLine("Uruchomiono funkcję");
-        MsgFromArduino = await SerialPort.GetSerialValue();
-        _updateTimer = new Timer(state => { InvokeAsync(GetArduinoMessage); }, null, 0, 100);
-    }
-
-    public async Task GetArduinoMessage()
-    {
-        string _MsgFromArduino;
-        _MsgFromArduino = await SerialPort.GetSerialValue();
-        if (_MsgFromArduino != MsgFromArduino)
+        if (SerialPort == null)
         {
-            MsgFromArduino = _MsgFromArduino;
-            LightGotMsgDiode();
+            SerialPort = new SerialPortService("COM" + COMPort);
+            Console.WriteLine("Próba łączenia się");
         }
-        await InvokeAsync(() => StateHasChanged());
+        else
+        {
+            Console.WriteLine("Już połączono");
+        }
     }
 
-    public void SendToArduino()
-    {
-        SerialPort.SendDataToArduino(MsgToArduino);
-    }
 
     public static async void LightGotMsgDiode()
     {
@@ -598,6 +648,7 @@
 
         private int GetLastId()
         {
+            Ids.Clear();
             for (int i = 0; i < SequenceList.Count; i++)
             {
                 Ids.Add(SequenceList[i].Id);
@@ -721,7 +772,6 @@
                 break;
             }
         }
-
     }
 
     public class Preset
@@ -794,24 +844,20 @@
         }
     }
 
-    [JSInvokable]
     public static void ChangeLightInfo(int _lightId, string _name, int _startCh)
     {
         Light CurrentLight;
-        Console.WriteLine(_lightId);
 
-        for (int i = 0; i < CurrentBank.Lights.Count; i++)
+        CurrentLight = CurrentBank.Lights.Find((item) => item.Id == _lightId);
+        int lightIndex = CurrentBank.Lights.IndexOf(CurrentLight);
+
+        if (CurrentLight != null)
         {
-            if (CurrentBank.Lights[i].Id == _lightId)
-            {
-                CurrentLight = CurrentBank.Lights[i];
-                CurrentLight.Name = _name;
-                CurrentLight.startCh = _startCh;
-                WriteToBanks(BanksList);
-                break;
-            }
+            CurrentLight.Name = _name;
+            CurrentLight.startCh = _startCh;
+            BanksList[CurrentBank.Id].Lights[lightIndex] = CurrentLight;
+            WriteToBanks(BanksList);
         }
-
     }
 
     public class Bank
@@ -829,9 +875,6 @@
         public int xPos { get; set; }
         public int yPos { get; set; }
         public int startCh { get; set; }
-        public int rCh { get; set; }
-        public int gCh { get; set; }
-        public int bCh { get; set; }
 
         public Light()
         {
@@ -840,9 +883,6 @@
             this.xPos = 0;
             this.yPos = 0;
             this.startCh = 1;
-            this.rCh = 1;
-            this.gCh = 2;
-            this.bCh = 3;
         }
     }
 }

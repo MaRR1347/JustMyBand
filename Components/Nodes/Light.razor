@@ -8,18 +8,13 @@
     @if (EditLight)
     {
         <span>Nazwa: </span>
-            <input type="text" @bind-value=LightName />
+        <input type="text" @bind-value=LightName />
 
         <span>Kanał początkowy: </span>
         <span>
             <input type="number" @bind-value=startCh />
-            <input type="submit" @onclick="() => ChangeInfo()" onfocus="document.querySelector('#edit-light@(LightId)-toggler').click()" />
+            <input type="submit" value="Zapisz" @onmousedown='() => {Console.WriteLine("Żądanie wywołania");ChangeInfo();}' onmouseup="document.querySelector('#edit-light@(LightId)-toggler').click()" />
         </span>
-
-
-        @* <label>Kanał R: <input type="number" @bind-value=rCh /></label> *@
-        @* <label>Kanał G: <input type="number" @bind-value=gCh /></label> *@
-        @* <label>Kanał B: <input type="number" @bind-value=bCh /></label> *@
     }
     else {
         <p>@LightName</p>
@@ -33,15 +28,14 @@
     [Parameter]
     public int LightId { get; set; }
     [Parameter]
-    public string LightName { get; set; }
+    public string? LightName { get; set; }
     [Parameter]
     public bool EditMode { get; set; }
     [Parameter]
     public int startCh { get; set; }
 
     public async void ChangeInfo()
-    {
-        await Task.Delay(15);
+    {      
         LightView.ChangeLightInfo(LightId, LightName, startCh);
     }
     
