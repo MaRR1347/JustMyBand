@@ -1,88 +1,107 @@
-﻿@inject IHttpContextAccessor HttpContextAccessor
-@inject Services.QueueService QueueService
+﻿@inject Services.QueueService QueueService
 @inject IJSRuntime JS
 
 <section class="user-settings">
-    <h3>UserSettings</h3>
+	<h3>UserSettings</h3>
 
-    <p>
-        Ciemny Motyw @DarkTheme:
+	<p>
+		Ciemny Motyw:
 
-        @if (DarkTheme == "true")
-        {
-            <input type="checkbox" checked @onclick='() => ChangeSetting("DarkTheme", "false")' />
-        }
-        else
-        {
-            <input type="checkbox" @onclick='() => ChangeSetting("DarkTheme", "true")' />
-        }
-    </p>
+		@if (DarkTheme == "true")
+		{
+			<input type="checkbox" checked @onclick='() => ChangeSetting("DarkTheme", "false")' />
+		}
+		else
+		{
+			<input type="checkbox" @onclick='() => ChangeSetting("DarkTheme", "true")' />
+		}
+	</p>
 
-    <p>
-        Tryb desktopowy @DesktopMode:
-        @if (DesktopMode == "true")
-        {
-            <input type="checkbox" checked @onclick='() => ChangeSetting("DesktopMode", "false")' />
-        }
-        else
-        {
-            <input type="checkbox" @onclick='() => ChangeSetting("DesktopMode", "true")' />
-        }
-    </p>
+	<p>
+		Tryb desktopowy:
+		@if (DesktopMode == "true")
+		{
+			<input type="checkbox" checked @onclick='() => ChangeSetting("DesktopMode", "false")' />
+		}
+		else
+		{
+			<input type="checkbox" @onclick='() => ChangeSetting("DesktopMode", "true")' />
+		}
+	</p>
 
-    <p>
-        Rozmiar czcionki: @FontSize
-        <button @onclick='() => ChangeSetting("FontSize", (Convert.ToInt16(FontSize)-1).ToString())'>-</button>
-        <button @onclick='() => ChangeSetting("FontSize", (Convert.ToInt16(FontSize)+1).ToString())'>+</button>
-    </p>
+	<p>
+		Rozmiar czcionki:
+		<button @onclick='() => ChangeSetting("FontSize", (Convert.ToInt16(FontSize)-1).ToString())'>-</button>
+		@FontSize
+		<button @onclick='() => ChangeSetting("FontSize", (Convert.ToInt16(FontSize)+1).ToString())'>+</button>
+	</p>
 
 </section>
 
 
 @code {
-    const string filePath = "usersettings.json";
+	[Parameter] public EventCallback SettingsChangedCallback { get; set; }
+	const string filePath = "usersettings.json";
 
-    public Dictionary<string, string> showInfo;
-    public string DarkTheme;
-    public string DesktopMode;
-    public string FontSize;
+	public Dictionary<string, string> showInfo;
+	public string DarkTheme;
+	public string DesktopMode;
+	public string FontSize;
 
 
-    protected override void OnInitialized()
-    {
-        // WriteToJsonFile(UserSettings);
-        showInfo = ReadListFromJsonFile(filePath);
+	private async Task SetCookie(string name, string value)
+	{
+		await JS.InvokeVoidAsync("setCookie", name, value, 30);
+	}
 
-        DarkTheme = showInfo["DarkTheme"];
-        DesktopMode = showInfo["DesktopMode"];
-        FontSize = showInfo["FontSize"];
-    }
+	protected override void OnInitialized()
+	{
+		// WriteToJsonFile(UserSettings);
+		showInfo = ReadListFromJsonFile(filePath);
 
-    //Zapisywanie ustawień do pliku JSON
-    public void WriteToJsonFile(Dictionary<string, string> data)
-    {
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        string jsonString = JsonSerializer.Serialize(data, options);
-        File.WriteAllText(filePath, jsonString);
-    }
-    //Odczytywanie ustawień z pliku JSON
-    public Dictionary<string, string> ReadListFromJsonFile(string filePath)
-    {
-        string jsonString = File.ReadAllText(filePath);
-        return JsonSerializer.Deserialize<Dictionary<string, string>>(jsonString);
-    }
+		DarkTheme = showInfo["DarkTheme"];
+		DesktopMode = showInfo["DesktopMode"];
+		FontSize = showInfo["FontSize"];
+	}
 
-    //Zmiana ustawienia
-    public async Task ChangeSetting(string name, string value)
-    {
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await JS.InvokeVoidAsync("import", "/cookies.js");
+			FontSize = await JS.InvokeAsync<string>("getCookie", "FontSize") ?? "16";
+			StateHasChanged();
+		}
+	}
 
-        if (name == "DarkTheme")
-            DarkTheme = value;
-        else if (name == "DesktopMode")
-            DesktopMode = value;
-        else if (name == "FontSize")
-            FontSize = value;
 
-        StateHasChanged();
-    }
+	//Zapisywanie ustawień do pliku JSON
+	public void WriteToJsonFile(Dictionary<string, string> data)
+	{
+		var options = new JsonSerializerOptions { WriteIndented = true };
+		string jsonString = JsonSerializer.Serialize(data, options);
+		File.WriteAllText(filePath, jsonString);
+	}
+	//Odczytywanie ustawień z pliku JSON
+	public Dictionary<string, string> ReadListFromJsonFile(string filePath)
+	{
+		string jsonString = File.ReadAllText(filePath);
+		return JsonSerializer.Deserialize<Dictionary<string, string>>(jsonString);
+	}
+
+	//Zmiana ustawienia
+	public async Task ChangeSetting(string name, string value)
+	{
+		await JS.InvokeVoidAsync("import", "/cookies.js");
+		await SetCookie(name, value);
+
+		if (name == "DarkTheme")
+			DarkTheme = value;
+		else if (name == "DesktopMode")
+			DesktopMode = value;
+		else if (name == "FontSize")
+			FontSize = value;
+
+		await SettingsChangedCallback.InvokeAsync();
+	}
 }

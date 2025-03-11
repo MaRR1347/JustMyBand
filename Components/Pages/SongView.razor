@@ -6,171 +6,199 @@
 @inject Services.QueueService QueueService
 @inject Services.SongService SongsService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 @using Models
 
 
 <section class="song-view">
-    <div id="container">
-        <section id="song">
-            @if (queue.Count > 0)
-            {
-                GetText();
-                <section>
-                    <pre>
-                        @text
-                            </pre>
-                </section>
-            }
-        </section>
+	<div id="container">
+		<section id="song">
+			@if (queue.Count > 0)
+			{
+				GetText();
+				<section>
+					<pre style="font-size: @fontSize;">
+						@text
+					</pre>
+				</section>
+			}
+		</section>
 
-        @if (ListOn)
-        {
-            <section id="list" class="frame">
-                <EditForm Model="queueToAdd" OnValidSubmit="AddToQueue" FormName="queue">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div id="controls">
-                        <div class="wymysl_jakas_nazwe">
-                            <label for="choose" class="form-label">Choose Song:</label>
-                            <InputSelect @bind-Value="queueToAdd.SongId">
-                                @for (int i = 1; i <= titles.Count(); i++)
-                                {
-                                    <option value="@i">@titles[i - 1]</option>
-                                }
-                            </InputSelect>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </EditForm>
-            </section>
-        }
-        @if (QueueOn)
-        {
-            <section id="queue" class="frame">
-                <table class="table">
+		<div id="settingsPopUps">
 
-                    <thead>
-                        <tr>
-                            <th>Number</th>
-                            <th>Title</th>
-                            <th> </th>
-                        </tr>
-                    </thead>
+			@if (SettingsOn)
+			{
+				<section id="settings" class="frame">
+					<UserSettingsComponent SettingsChangedCallback="ChangeSettings"></UserSettingsComponent>
+				</section>
+			}
 
-                    <tbody>
-                        @for (int i = 0; i < queue.Count(); i++)
-                        {
-                            int index = i;
-                            <tr>
-                                <td>@(i + 1)</td>
-                                <td>@titles[queue[i].SongId - 1]</td>
-                                <td>
-                                    <button style="float:right" type="button" class="btn btn-danger" @onclick="@(()=>DeleteFromQueue(queue[index].Id))">Delete</button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </section>
-        }
-        @if (SettingsOn)
-        {
-            <section id="settings" class="frame">
-                <UserSettingsComponent></UserSettingsComponent>
-            </section>
-        }
-    </div>
+			@if (ListOn)
+			{
+				<section id="list" class="frame">
+					<table class="table">
 
-    <section id="song-nav">
-        <div class="song-nav-item" id="nav-settings" @onclick="() => { if(!SettingsOn) {TurnFramesOff(1);} else TurnFramesOff();}"><img src="Images/settings.svg" /></div>
-        <div class="song-nav-item" id="nav-list" @onclick="() => { if(!QueueOn) {TurnFramesOff(2);} else TurnFramesOff();}"><img src="Images/menu-burger.svg" /></div>
-        <div class="song-nav-item" id="nav-queue" @onclick="() => { if(!QueueOn) {TurnFramesOff(3);} else TurnFramesOff();}"><img src=" Images/multiple-alt.svg" /></div>
-        <div class="song-nav-item" id="nav-forward" @onclick="@(async ()=>{if(queue.Count > 0)await DeleteFromQueue(queue[0].Id);})"><img src="Images/angle-left.svg" /></div>
-    </section>
+						<thead>
+							<tr>
+								<th>Number</th>
+								<th>Title</th>
+								<th> </th>
+							</tr>
+						</thead>
+
+						<tbody>
+							@for (int i = 1; i <= titles.Count(); i++)
+							{
+								var index = i;
+								<tr @onclick="async () => {await AddToQueue(index); if(!QueueOn) QueueOn = true;}">
+									<td>@i</td>
+									<td>@titles[i - 1]</td>
+									<td></td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</section>
+			}
+
+			@if (QueueOn)
+			{
+				<section id="queue" class="frame">
+					<table class="table">
+
+						<thead>
+							<tr>
+								<th>Number</th>
+								<th>Title</th>
+								<th> </th>
+							</tr>
+						</thead>
+
+						<tbody>
+							@for (int i = 0; i < queue.Count(); i++)
+							{
+								var index = i;
+								<tr>
+									<td>@(i + 1)</td>
+									<td>@titles[queue[i].SongId - 1]</td>
+									<td>
+										<button style="float:right" type="button" class="btn btn-danger" @onclick="@(()=>DeleteFromQueue(queue[index].Id))">Delete</button>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</section>
+			}
+
+		</div>
+	</div>
+
+	<section id="song-nav">
+		<div class="song-nav-item" id="nav-settings" @onclick="() => TurnFramesOff(1)"><img src="Images/settings.svg" /></div>
+		<div class="song-nav-item" id="nav-list" @onclick="() => TurnFramesOff(2)"><img src="Images/menu-burger.svg" /></div>
+		<div class="song-nav-item" id="nav-queue" @onclick="() => TurnFramesOff(3)"><img src=" Images/multiple-alt.svg" /></div>
+		<div class="song-nav-item" id="nav-forward" @onclick="@(async ()=>{if(queue.Count > 0)await DeleteFromQueue(queue[0].Id);})"><img src="Images/angle-left.svg" /></div>
+	</section>
 </section>
 
 
 @code {
-    string? text;
-    List<string> titles = new List<string>();
-    List<BlazorApp1.Models.Queue> queue = new List<BlazorApp1.Models.Queue>();
-    BlazorApp1.Models.Queue queueToAdd = new BlazorApp1.Models.Queue();
-    Songs? currentSong;
+	string fontSize;
 
-    public bool SettingsOn = false;
-    public bool ListOn = false;
-    public bool QueueOn = false;
+	string? text;
+	List<string> titles = new List<string>();
+	List<BlazorApp1.Models.Queue> queue = new List<BlazorApp1.Models.Queue>();
+	Songs? currentSong;
 
-    public void TurnFramesOff(int WhatsOn = 0)
-    {
-        SettingsOn = false;
-        ListOn = false;
-        QueueOn = false;
-        switch (WhatsOn)
-        {
-            case 1:
-                SettingsOn = true;
-                break;
-            case 2:
-                ListOn = true;
-                break;
-            case 3:
-                QueueOn = true;
-                break;
-        }
+	public bool SettingsOn = false;
+	public bool ListOn = false;
+	public bool QueueOn = false;
 
+	public void TurnFramesOff(int WhatsOn = 0)
+	{
+		switch (WhatsOn)
+		{
+			case 1:
 
-    }
+				SettingsOn = !SettingsOn;
+				break;
+			case 2:
 
-    public async Task AddToQueue()
-    {
-        await QueueService.AddToQueue(queueToAdd);
+				ListOn = !ListOn;
+				break;
+			case 3:
+				QueueOn = !QueueOn;
+				break;
+		}
+	}
 
-        int id = queueToAdd.SongId;
-        queueToAdd = new BlazorApp1.Models.Queue();
-        queueToAdd.SongId = id;
-    }
+	public async Task ChangeSettings()
+	{
+		fontSize = await JS.InvokeAsync<string>("getCookie", "FontSize") ?? "16"; 
+		fontSize += "px";
+		StateHasChanged();
+		Console.WriteLine(fontSize);
+	}
 
-    public async Task DeleteFromQueue(int x)
-    {
-        await QueueService.DeleteFromQueue(x);
-    }
+	public async Task AddToQueue(int songId)
+	{
+		BlazorApp1.Models.Queue queueToAdd = new BlazorApp1.Models.Queue();
+		queueToAdd.SongId = songId;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-        queueToAdd.SongId = 1;
+		await QueueService.AddToQueue(queueToAdd);
+	}
 
-        QueueService.OnQueueChanged += async (_queue) =>
-        {
-            await LoadData();
-            await InvokeAsync(StateHasChanged);
-        };
+	public async Task DeleteFromQueue(int x)
+	{
+		await QueueService.DeleteFromQueue(x);
+	}
 
-        SongsService.OnSongsChanged += async (_song) =>
-        {
-            await LoadData();
-            await InvokeAsync(StateHasChanged);
-        };
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadData();
 
-    private async Task LoadData()
-    {
-        List<Songs> songs = await SongsService.GetAll();
-        titles.Clear();
-        foreach (var song in songs)
-        {
-            titles.Add(song.Title);
-        }
+		QueueService.OnQueueChanged += async (_queue) =>
+		{
+			await LoadData();
+			await InvokeAsync(StateHasChanged);
+		};
 
-        queue = await QueueService.GetAll();
-        if (queue.Count > 0) currentSong = songs[queue[0].SongId - 1];
-    }
+		SongsService.OnSongsChanged += async (_song) =>
+		{
+			await LoadData();
+			await InvokeAsync(StateHasChanged);
+		};
+	}
 
-    private void GetText()
-    {
-        text = File.ReadAllText(@"Texts\" + Regex.Replace(currentSong.Title, @"\s", string.Empty) + ".txt");
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if(firstRender)
+		{
+			await JS.InvokeVoidAsync("import", "/cookies.js");
+			fontSize = await JS.InvokeAsync<string>("getCookie", "FontSize") ?? "16";
+			fontSize += "px";
+			StateHasChanged();
+		}
+	}
 
-    }
+	private async Task LoadData()
+	{
+		List<Songs> songs = await SongsService.GetAll();
+		titles.Clear();
+		foreach (var song in songs)
+		{
+			titles.Add(song.Title);
+		}
+
+		queue = await QueueService.GetAll();
+		if (queue.Count > 0) currentSong = songs[queue[0].SongId - 1];
+	}
+
+	private void GetText()
+	{
+		text = File.ReadAllText(@"Texts\" + Regex.Replace(currentSong.Title, @"\s", string.Empty) + ".txt");
+
+	}
 }

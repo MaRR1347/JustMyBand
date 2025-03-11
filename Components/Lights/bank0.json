@@ -1,42 +1,107 @@
 [
-  {
-    "Id": 3,
-    "Name": "Wielki Rozkurwiacz",
-    "LoopPreset": true,
-    "Commands": []
-  },
-  {
-    "Id": 4,
-    "Name": "Nowy Preset",
-    "LoopPreset": true,
-    "Commands": []
-  },
-  {
-    "Id": 2,
-    "Name": "Nowy Preset",
-    "LoopPreset": true,
-    "Commands": [
-      {
-        "Id": 0,
-        "Type": 0,
-        "LightId": 0,
-        "Color": "#ffff00",
-        "Duration": 0
-      },
-      {
-        "Id": 1,
-        "Type": 0,
-        "LightId": 0,
-        "Color": "#fa0000",
-        "Duration": 2
-      },
-      {
+    {
+        "Id": 4,
+        "Name": "Nowy Preset",
+        "LoopPreset": true,
+        "Commands": [
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#0aff5c",
+                "Duration": 0
+            }
+        ]
+    },
+    {
         "Id": 2,
-        "Type": 0,
-        "LightId": 0,
-        "Color": "#73ff00",
-        "Duration": 1
-      }
-    ]
-  }
+        "Name": "Nowy Preset",
+        "LoopPreset": true,
+        "Commands": [
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#d6edff",
+                "Duration": 0
+            },
+            {
+                "Id": 0,
+                "Type": 1,
+                "LightId": 100,
+                "Color": null,
+                "Duration": 500
+            },
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#ff0000",
+                "Duration": 0
+            },
+            {
+                "Id": 0,
+                "Type": 1,
+                "LightId": 100,
+                "Color": null,
+                "Duration": 1000
+            },
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#006eff",
+                "Duration": 0
+            }
+        ]
+    },
+    {
+        "Id": 0,
+        "Name": "Fade",
+        "LoopPreset": true,
+        "Commands": [
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#f24040",
+                "Duration": 0
+            },
+            {
+                "Id": 0,
+                "Type": 1,
+                "LightId": 100,
+                "Color": null,
+                "Duration": 500
+            },
+            {
+                "Id": 0,
+                "Type": 2,
+                "LightId": 500,
+                "Color": null,
+                "Duration": 700
+            },
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#142243",
+                "Duration": 0
+            },
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#000000",
+                "Duration": 2
+            },
+            {
+                "Id": 0,
+                "Type": 0,
+                "LightId": 0,
+                "Color": "#000000",
+                "Duration": 2
+            }
+        ]
+    }
 ]
