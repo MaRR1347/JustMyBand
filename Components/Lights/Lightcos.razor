@@ -1,0 +1,18 @@
+﻿@page "/lightcos"
+@rendermode InteractiveServer
+
+<button class="btn-primary" @onclick='() => {count++;}'>
+    Dodaj światło
+</button>
+
+@for (int i = 0; i < count; i++)
+{
+    <Light CounterValue=i StylesLeft=@(i*40+100) StylesTop=150></Light>
+}
+
+@code { 
+    public bool isDragging = false;
+
+    public int count = 0;
+
+}

@@ -1,0 +1,218 @@
+﻿body {
+    margin: 10px !important;
+    padding: 10px !important;
+}
+
+/*--------------  INNE  ---------------*/
+.normal-button {
+    height: 35px;
+    padding: 0 5px;
+    border: 0;
+    border-radius: 5px;
+}
+
+/*----- Bank -----*/
+select {
+    width: 100px;
+    height: 40px;
+    border-radius: 8px;
+    outline: none;
+}
+option:hover {
+    background-color: #ccc;
+}
+
+/*------------LIGHTS-------------*/
+#lights-preview {
+    width: 1100px;
+    height: 500px;
+    position: relative;
+    margin: 10px 0;
+    border: 3px solid #000;
+    background-color: #111;
+    border-radius: 15px;
+}
+
+.remove-light {
+    position: absolute;
+    top: -23px;
+    right: -50px;
+    z-index: 11;
+    width: 35px;
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 50%;
+    background-color: #f00;
+}
+
+
+/*-------------PRESETS-------------*/
+
+#preset-preview {
+    display: flex;
+}
+
+#preset-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 400px;
+    height: 300px;
+    border: 1px solid #444;
+    overflow-y: auto;
+}
+    #preset-container > button {
+        width: 150px;
+        height: 50px;
+    }
+
+.preset-block {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 110px;
+    width: 180px;
+    padding: 10px;
+    margin: 5px;
+    background-color: #282828;
+    border: 1px solid #222;
+    border-radius: 10px;
+    cursor: pointer;
+}
+    .preset-block-active {
+        outline: 3px solid #52b2e8;
+    }
+    .preset-block input {
+        width: 148px;
+        margin: auto;
+        padding: 4px;
+        border: none;
+        border-radius: 5px;
+        outline: none;
+        color: white;
+        background-color: #444;
+    }
+
+.color-preview {
+    content: " ";
+    position: relative;
+    display: inline-block;
+    left: 10px;
+    width: 50px;
+    height: 30px;
+}
+
+.remove-preset {
+    margin: auto;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    border: 1px solid black;
+    border-radius: 50px;
+}
+
+    .remove-preset:hover {
+        background-color: rgb(218, 0, 0);
+    }
+
+.preview-next-preset{
+    background-color: #444;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    color: white;
+    border: none;
+    border-radius: 50px;
+}
+
+    .preview-next-preset:hover {
+        background-color: #555;
+    }
+
+/*--------------MIDI--------------*/
+#midi-devices {
+    border: 1px solid #444;
+    width: 350px;
+}
+
+#midi-preset-assign {
+    border: 1px solid #444;
+    height: 250px;
+}
+
+#midi-preview {
+    display: flex;
+}
+
+#midi-handler {
+    margin-top: 30px;
+}
+
+/*--------------CHECKBOX--------------*/
+.checkbox-wrapper-22 .switch {
+    display: inline-block;
+    height: 34px;
+    position: relative;
+    width: 95px;
+}
+
+    .checkbox-wrapper-22 .switch input {
+        display: none;
+    }
+
+.checkbox-wrapper-22 .slider {
+    background-color: #ccc;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+}
+
+    .checkbox-wrapper-22 .slider::before {
+        background-color: #fff;
+        bottom: 4px;
+        content: "";
+        height: 26px;
+        left: 4px;
+        position: absolute;
+        transition: .4s;
+        width: 26px;
+        z-index: 10;
+    }
+
+    .checkbox-wrapper-22 .slider::after {
+        content: "Edytuj";
+        font-weight: 500;
+        color: black;
+        position: absolute;
+        right: 10px;
+        top: 4px;
+        transition: 0.4s ease;
+    }
+
+.checkbox-wrapper-22 input:checked + .slider {
+    background-color: #52b2e8;
+}
+
+    .checkbox-wrapper-22 input:checked + .slider::before {
+        transform: translateX(60px);
+    }
+
+    .checkbox-wrapper-22 input:checked + .slider::after {
+        color: white;
+        position: absolute;
+        right: 38px;
+    }
+
+.checkbox-wrapper-22 .slider.round {
+    border-radius: 34px;
+}
+
+    .checkbox-wrapper-22 .slider.round:before {
+        border-radius: 50%;
+    }

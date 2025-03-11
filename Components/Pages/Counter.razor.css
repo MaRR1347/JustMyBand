@@ -1,0 +1,18 @@
+﻿#formDiv {
+    position: absolute;
+    left: calc(50% - 300px);
+    width: 600px;
+    background-color: gray;
+    border-radius: 5px 5px 0 0;
+    bottom: 0;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+#container{
+    margin: auto;
+    width: 80%;
+    height: 500px;
+}

@@ -1,0 +1,88 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@inject Services.QueueService QueueService
+@inject IJSRuntime JS
+
+<section class="user-settings">
+    <h3>UserSettings</h3>
+
+    <p>
+        Ciemny Motyw @DarkTheme:
+
+        @if (DarkTheme == "true")
+        {
+            <input type="checkbox" checked @onclick='() => ChangeSetting("DarkTheme", "false")' />
+        }
+        else
+        {
+            <input type="checkbox" @onclick='() => ChangeSetting("DarkTheme", "true")' />
+        }
+    </p>
+
+    <p>
+        Tryb desktopowy @DesktopMode:
+        @if (DesktopMode == "true")
+        {
+            <input type="checkbox" checked @onclick='() => ChangeSetting("DesktopMode", "false")' />
+        }
+        else
+        {
+            <input type="checkbox" @onclick='() => ChangeSetting("DesktopMode", "true")' />
+        }
+    </p>
+
+    <p>
+        Rozmiar czcionki: @FontSize
+        <button @onclick='() => ChangeSetting("FontSize", (Convert.ToInt16(FontSize)-1).ToString())'>-</button>
+        <button @onclick='() => ChangeSetting("FontSize", (Convert.ToInt16(FontSize)+1).ToString())'>+</button>
+    </p>
+
+</section>
+
+
+@code {
+    const string filePath = "usersettings.json";
+
+    public Dictionary<string, string> showInfo;
+    public string DarkTheme;
+    public string DesktopMode;
+    public string FontSize;
+
+
+    protected override void OnInitialized()
+    {
+        // WriteToJsonFile(UserSettings);
+        showInfo = ReadListFromJsonFile(filePath);
+
+        DarkTheme = showInfo["DarkTheme"];
+        DesktopMode = showInfo["DesktopMode"];
+        FontSize = showInfo["FontSize"];
+    }
+
+    //Zapisywanie ustawień do pliku JSON
+    public void WriteToJsonFile(Dictionary<string, string> data)
+    {
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        string jsonString = JsonSerializer.Serialize(data, options);
+        File.WriteAllText(filePath, jsonString);
+    }
+    //Odczytywanie ustawień z pliku JSON
+    public Dictionary<string, string> ReadListFromJsonFile(string filePath)
+    {
+        string jsonString = File.ReadAllText(filePath);
+        return JsonSerializer.Deserialize<Dictionary<string, string>>(jsonString);
+    }
+
+    //Zmiana ustawienia
+    public async Task ChangeSetting(string name, string value)
+    {
+
+        if (name == "DarkTheme")
+            DarkTheme = value;
+        else if (name == "DesktopMode")
+            DesktopMode = value;
+        else if (name == "FontSize")
+            FontSize = value;
+
+        StateHasChanged();
+    }
+}

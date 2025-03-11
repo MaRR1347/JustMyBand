@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 3,
+    "Name": "Wielki Rozkurwiacz",
+    "LoopPreset": true,
+    "Commands": []
+  },
+  {
+    "Id": 4,
+    "Name": "Nowy Preset",
+    "LoopPreset": true,
+    "Commands": []
+  },
+  {
+    "Id": 2,
+    "Name": "Nowy Preset",
+    "LoopPreset": true,
+    "Commands": [
+      {
+        "Id": 0,
+        "Type": 0,
+        "LightId": 0,
+        "Color": "#ffff00",
+        "Duration": 0
+      },
+      {
+        "Id": 1,
+        "Type": 0,
+        "LightId": 0,
+        "Color": "#fa0000",
+        "Duration": 2
+      },
+      {
+        "Id": 2,
+        "Type": 0,
+        "LightId": 0,
+        "Color": "#73ff00",
+        "Duration": 1
+      }
+    ]
+  }
+]

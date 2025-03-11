@@ -1,0 +1,64 @@
+[
+  {
+    "Id": 0,
+    "Name": "bank1",
+    "Lights": [
+      {
+        "Id": 0,
+        "Name": "\u015Bwiat\u0142o 1",
+        "xPos": 423,
+        "yPos": 73,
+        "startCh": 1,
+        "rCh": 1,
+        "gCh": 2,
+        "bCh": 3
+      },
+      {
+        "Id": 1,
+        "Name": "Nowe \u015Bwiat\u0142o",
+        "xPos": 76,
+        "yPos": 130,
+        "startCh": 1,
+        "rCh": 1,
+        "gCh": 2,
+        "bCh": 3
+      },
+      {
+        "Id": 2,
+        "Name": "Nowe \u015Bwiat\u0142o",
+        "xPos": 696,
+        "yPos": 149,
+        "startCh": 1,
+        "rCh": 1,
+        "gCh": 2,
+        "bCh": 3
+      }
+    ]
+  },
+  {
+    "Id": 1,
+    "Name": "bank2",
+    "Lights": [
+      {
+        "Id": 0,
+        "Name": "light0",
+        "xPos": 240,
+        "yPos": 100,
+        "startCh": 1,
+        "rCh": 1,
+        "gCh": 2,
+        "bCh": 3
+      },
+      {
+        "Id": 1,
+        "Name": "light2",
+        "xPos": 445,
+        "yPos": 100,
+        "startCh": 1,
+        "rCh": 1,
+        "gCh": 2,
+        "bCh": 3
+      }
+    ]
+  }
+]

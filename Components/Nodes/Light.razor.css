@@ -1,0 +1,80 @@
+﻿* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+div {
+    display: block;
+    padding: 20px;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    border-radius: 100%;
+    background-color: #222;
+}
+.remove-light {
+    position: absolute;
+    top: -23px;
+    right: -50px;
+    z-index: 11;
+    width: 35px;
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 50%;
+    background-color: #f00;
+}
+p {
+    margin-bottom: 5px;
+}
+input[id^="edit-light"] {
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    border-radius: 50%;
+    top: 0;
+    appearance: none;
+    border: 1px solid black;
+    transition: 200ms ease;
+    margin: 0;
+}
+    input[id^="edit-light"]:checked {
+        background-color: #52b2e8;
+        border: 20px;
+        width: 200px;
+        height: 150px;
+        border-radius: 20px;
+        transform: translateY(-12px);
+    }
+    div input[type="submit"], div span, div input {
+        z-index: 10;
+    }
+
+div span {
+    width: max-content;
+}
+    div input {
+        width: 160px;
+        padding: 0 5px;
+        border: 1px solid #fff0;
+        border-radius: 5px;
+        outline: none;
+        margin-bottom: 10px;
+        margin-top: 3px;
+    }
+        div input:not(:first-child):focus {
+            background-color: #fffc;
+        }
+    div input:nth-child(3) {
+        max-width: 80px;
+    }
+    div input[type="number"], div input[type="submit"] {
+        width: 80px;
+        margin: 0 3px;
+        float: left;
+    }

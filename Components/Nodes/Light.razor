@@ -1,0 +1,48 @@
+﻿@using BlazorApp1.Components.Pages
+
+<div id="light-@LightId" draggable="false">
+    @if(EditMode){
+        <input type="checkbox" @bind=EditLight id="edit-light@(LightId)-toggler"/>
+    }
+
+    @if (EditLight)
+    {
+        <span>Nazwa: </span>
+            <input type="text" @bind-value=LightName />
+
+        <span>Kanał początkowy: </span>
+        <span>
+            <input type="number" @bind-value=startCh />
+            <input type="submit" @onclick="() => ChangeInfo()" onfocus="document.querySelector('#edit-light@(LightId)-toggler').click()" />
+        </span>
+
+
+        @* <label>Kanał R: <input type="number" @bind-value=rCh /></label> *@
+        @* <label>Kanał G: <input type="number" @bind-value=gCh /></label> *@
+        @* <label>Kanał B: <input type="number" @bind-value=bCh /></label> *@
+    }
+    else {
+        <p>@LightName</p>
+    }
+</div>
+
+
+@code {
+    public bool EditLight = false;
+
+    [Parameter]
+    public int LightId { get; set; }
+    [Parameter]
+    public string LightName { get; set; }
+    [Parameter]
+    public bool EditMode { get; set; }
+    [Parameter]
+    public int startCh { get; set; }
+
+    public async void ChangeInfo()
+    {
+        await Task.Delay(15);
+        LightView.ChangeLightInfo(LightId, LightName, startCh);
+    }
+    
+}

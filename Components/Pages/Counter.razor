@@ -1,0 +1,207 @@
+﻿@page "/modify"
+@rendermode InteractiveServer
+
+@inject Services.SongService songservice
+@inject Services.QueueService queueservice
+
+@using Models
+@using System.Text.RegularExpressions
+@using BlazorApp1.DBContext
+
+<section id="container">
+
+	<PageTitle>Songs</PageTitle>
+
+	@if (isFocused)
+	{
+		<div id="formDiv" @ref="formDiv" tabindex="0" @onfocusin="FormClicked" @onfocusout="FormFocusOut">
+			<EditForm Model="song" OnValidSubmit="AddOrEditRecord" FormName="songs">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
+				<div class="container">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="title" class="form-label">title:</label>
+								<InputText @onfocusin="FormElementFocused" @onfocusout="FormElementLostFocus" @bind-Value="song.Title" id="title" class="form-control" />
+								<label for="text" class="form-label">text:</label>
+								<InputTextArea @onfocusin="FormElementFocused" @onfocusout="FormElementLostFocus" @bind-Value="text" id="text" class="form-control" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">@EditMode</button>
+			</EditForm>
+		</div>
+	}
+
+
+	<button class="btn btn-primary" @onclick="FocusOnForm">Add Song</button>
+
+	<div class="row">
+		<div class="col-md-8">
+			<table class="table">
+
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Title</th>
+						<th>Notes</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					@foreach (Songs item in songs)
+					{
+						@if(songs[0] == item)
+						{
+							index = 1;
+						}
+						<tr>
+							<td>@index</td>
+							<td>@item.Title</td>
+							<td>
+								<button type="button" class="btn btn-danger" @onclick="@(async () => await DeleteRecord(item.Id))">Delete</button>
+							</td>
+							<td>
+								<button type="button" class="btn btn-warning" @onclick="@(async()=>{LoadToEdit(item.Id); await FocusOnForm();})">Edit</button>
+							</td>
+						</tr>
+						index++;
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</section>
+
+@code {
+	public int index = 1;
+	private ElementReference formDiv;
+
+	bool formFocused = false;
+	bool clickedOnForm = false;
+	bool isFocused = false;
+
+	string? text;
+	private Songs song = new Songs();
+	List<Songs> songs = new List<Songs>();
+	string EditMode = "Add Record";
+
+	private async Task FocusOnForm()
+	{
+		isFocused = true;
+
+		await Task.Delay(1);
+		await formDiv.FocusAsync();
+
+		clickedOnForm = false;
+	}
+
+	private void FormElementFocused()
+	{
+		formFocused = true;
+	}
+
+	private void FormElementLostFocus()
+	{
+		formFocused = false;
+	}
+
+	private void FormClicked()
+	{
+		clickedOnForm = true;
+	}
+
+	private async Task FormFocusOut()
+	{
+		await Task.Delay(5);
+		if (!formFocused && !clickedOnForm)
+		{
+			isFocused = false;
+			clickedOnForm = false;
+		}
+		else
+			clickedOnForm = false;
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadData();
+
+		songservice.OnSongsChanged += async (_queue) =>
+		{
+			await LoadData();
+			await InvokeAsync(StateHasChanged);
+		};
+	}
+
+	private async Task LoadData()
+	{
+		songs = await songservice.GetAll();
+	}
+
+	public async Task AddOrEditRecord()
+	{
+		if (EditMode == "Add Record")
+		{
+
+			if (song.Title == null) return;
+
+			await songservice.AddNewSong(song);
+			await File.WriteAllTextAsync(@"Texts\" + Regex.Replace(song.Title, @"\s", string.Empty) + ".txt", text);
+
+			song = new Songs();
+			text = string.Empty;
+		}
+		else
+		{
+			await songservice.EditSong(song);
+			await File.WriteAllTextAsync(@"Texts\" + Regex.Replace(song.Title, @"\s", string.Empty) + ".txt", text);
+
+			song = new Songs();
+			text = string.Empty;
+
+			EditMode = "Add Record";
+		}
+
+		await LoadData();
+	}
+
+	public async Task DeleteRecord(int id)
+	{
+		List<Songs> songs = await songservice.GetAll();
+		string title = "";
+		Songs song = new Songs();
+
+		foreach (var item in songs)
+			if (item.Id == id) song = item;
+
+		title = song.Title;
+
+		if (File.Exists(@"Texts\" + Regex.Replace(title, @"\s", string.Empty) + ".txt"))
+			File.Delete(@"Texts\" + Regex.Replace(title, @"\s", string.Empty) + ".txt");
+
+		List<BlazorApp1.Models.Queue> queue = await queueservice.GetAll();
+		foreach (var item in queue)
+		{
+			if (item.SongId == songs.IndexOf(song) + 1)
+				await queueservice.DeleteFromQueue(item.Id);
+		}
+
+		await songservice.DeleteSong(id);
+		await LoadData();
+	}
+
+	public void LoadToEdit(int id)
+	{
+		var record = songs.Where(s => s.Id == id).FirstOrDefault();
+		if (record == null) return;
+		song = record;
+		text = File.ReadAllText(@"Texts\" + Regex.Replace(song.Title, @"\s", string.Empty) + ".txt");
+		EditMode = "Edit Record";
+	}
+}
