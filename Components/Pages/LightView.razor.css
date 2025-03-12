@@ -13,6 +13,24 @@
 .flex {
     display: flex;
 }
+.flex-between {
+    display: flex;
+    justify-content: center;
+}
+    .flex-between span {
+        text-align: right;
+        width: 80px;
+        padding-right: 15px;
+    }
+    .flex-between input {
+        width: 100px;
+    }
+.frame {
+    left: 20px;
+    background-color: #282828;
+    padding: 10px;
+    border-radius: 15px;
+}
 
 /*----- Bank -----*/
 select {
@@ -59,7 +77,7 @@ option:hover {
 #preset-container {
     display: flex;
     flex-wrap: wrap;
-    width: 400px;
+    width: 880px;
     height: 300px;
     border: 1px solid #444;
     overflow-y: auto;
@@ -138,17 +156,37 @@ option:hover {
 
 /*--------------  SEQUENCE  --------------*/
 #sequence-container {
-    display: inline-block;
+    display: flex;
+    width: 80vw;
+    justify-content: space-between;
+}
+#sequence-tree div {
+    display: flex;
+    align-items: center;
+}
+.inactive {
+    width: 200px;
+    left: 0;
 }
 #sequence-elements ul, #sequence-tree ul {
     list-style-type: none;
     padding: 0;
 }
-
+#sequence-elements li, #sequence-tree li {
+    background-color: #3A3A3A;
+    justify-content: space-between;
+    border-radius: 20px;
+    padding: 15px;
+    margin: 5px 0;
+    transition: 0.3s ease;
+}
     #sequence-elements li {
-
+        background-color: #282828;
+        width: 150px;
     }
-
+        #sequence-elements li:hover {
+            background-color: #3A3A3A;
+        }
     #sequence-tree ul {
         display: flex;
         flex-direction: column;
@@ -157,11 +195,6 @@ option:hover {
         width: 350px;
         height: 60px;
         display: flex;
-        justify-content: space-between;
-        background-color: #3A3A3A;
-        border-radius: 20px;
-        padding: 15px;
-        margin: 5px 0;
     }
         #sequence-tree li > span {
             width: 100px;
@@ -189,15 +222,34 @@ option:hover {
             .rotate {
                 transform: rotate(90deg) scale(0.8);
             }
-        
-
-
-
 
 /*--------------  MIDI  --------------*/
 #midi-devices {
     border: 1px solid #444;
-    width: 350px;
+    width: 250px;
+}
+#midi-devices > button {
+    width: 100%;
+    margin: 3px 0;    
+}
+    .li span {
+        width: 56px;
+    }
+    .li input {
+        width: 160px;
+        height: 35px;
+        border: 0;
+        border-radius: 10px 0 0 10px;
+        background-color: #333;
+        color: white;
+    }
+.li button {
+    width: 35px;
+    height: 35px;
+    border: 0;
+    border-radius: 0 10px 10px 0;
+    color: white;
+    background-color: #c31815;
 }
 
 #midi-preset-assign {
@@ -211,6 +263,9 @@ option:hover {
 
 #midi-handler {
     margin-top: 30px;
+}
+#midi-handler input {
+    width: 80px;
 }
 
 /*--------------CHECKBOX--------------*/

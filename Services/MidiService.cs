@@ -19,7 +19,7 @@ public class MidiService : IDisposable
         }
         else
         {
-            throw new InvalidOperationException("No MIDI devices found.");
+            Console.WriteLine("No MIDI devices found.");
         }
     }
 

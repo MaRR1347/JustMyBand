@@ -91,7 +91,7 @@
         <button @onclick="AddPreset" class="normal-button">Dodaj Preset</button>
     }
 </section>
-<section id="preset-container">
+<section id="preset-container" class="frame">
     @if (PresetsList.Count > 0)
     {
         foreach (var preset in PresetsList)
@@ -125,11 +125,11 @@
         <span class="slider round"></span>
     </label>
 </div>
-<section id="sequence-container">
+<section id="sequence-container" class="frame">
     <section id="sequence-elements">
         @if (EditSequenceMode)
         {
-            <label>Zapętla się <input type="checkbox" @bind="LoopPreset" /></label>
+            @* <label>Zapętla się <input type="checkbox" @bind="LoopPreset" /></label> *@
             <ul>
                 <li @onclick="() => AddToSequence(1, 100)">Czekaj</li>
                 <li @onclick="() => AddToSequence(2, 500)">Fade</li>
@@ -177,14 +177,12 @@
             <ul>
                 @foreach (var seqEl in SequenceList)
                 {
-                    <li>
+                    <li class="inactive">
                         <div>
                             @if (seqEl.Type == 0)
                             {
-                                <span>
-                                    @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
+                                    <span>@CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name</span>
                                     <span class="color-preview" style="background-color: @seqEl.Color"> </span>
-                                </span>
                             }
                             else if (seqEl.Type == 1)
                             {
@@ -202,6 +200,11 @@
     </section>
 </section>
 
+<section id="midi-handler">
+    <input type="number" @bind="COMPort" />
+    <button @onclick="ConnectToArduino" class="normal-button">Połącz</button>
+</section>
+
 <div class="checkbox-wrapper-22">
     <label class="switch">
         <input type="checkbox" @bind=EditMIDIDevMode />
@@ -213,14 +216,16 @@
 
     <section id="midi-preview" class="frame">
         <section id="midi-devices">
-            <section class="flex">Kanał: <input type="number" @bind-value=MIDIDevKey /></section>
-            <section class="flex">Nazwa: <input type="text" @bind-value=MIDIDevName /> </section>
+            <section class="flex-between"><span>Kanał: </span><input type="number" @bind-value=MIDIDevKey /></section>
+            <section class="flex-between"><span>Nazwa: </span><input type="text" @bind-value=MIDIDevName /> </section>
             <button @onclick='DetectMIDIDevice' class="normal-button">Wykryj urządzenie</button>
             <button @onclick='AddToMIDIDevices' class="normal-button">Dodaj urządzenie</button>
             <section>
                 @foreach (var dev in MIDIDevices)
                 {
-                    <p> @dev.Key: <input type="text" @bind='MIDIDevices[dev.Key]' @bind:event="oninput" @onchange='() => WriteToMIDIDevices(MIDIDevices)' /><button @onclick='() => RemoveFromMIDIDevices(dev.Key)'>x</button></p>
+                    <section class="li">
+                        <span> @dev.Key:</span> <input type="text" @bind='MIDIDevices[dev.Key]' @bind:event="oninput" @onchange='() => WriteToMIDIDevices(MIDIDevices)' /><button @onclick='() => RemoveFromMIDIDevices(dev.Key)'>x</button>
+                    </section>
                 }
             </section>
 
@@ -237,7 +242,7 @@
                             {
                                 if (PresetsList.Find((item) => item.Id == MIDIPresets[midi.Key])?.Name != null)
                                 {
-                                    <label> | @PresetsList.Find((item) => item.Id == MIDIPresets[midi.Key]).Name <button @onclick='() => RemoveAssignedPreset(midi.Key)'>x</button></label>
+                                    <label> | @PresetsList.Find((item) => item.Id == MIDIPresets[midi.Key]).Name <button @onclick='() => RemoveAssignedPreset(midi.Key)'>✖</button></label>
                                 }
                             }
                         </li>
@@ -257,24 +262,9 @@
         </section>
     </section>
 }
-
-<section id="midi-handler">
-    <input type="number" @bind="COMPort" />
-    <button @onclick="ConnectToArduino" class="normal-button">Połącz</button>
-    @if (GotMsgDiode == 1)
-    {
-        <p style="height: 16px; width: 16px; border-radius: 50%; background-color: green;"></p>
-    }
-    else
-    {
-        <p style="height: 16px; width: 16px; border: 1px solid black; border-radius: 50%;"></p>
-    }
-</section>
-
 <section>
     <MidiListener />
     <MidiNoteHandler />
-    <p>@LastMidiNote</p>
 </section>
 
 @code {
@@ -386,49 +376,6 @@
         byte b = Convert.ToByte(hex.Substring(4, 2), 16);
 
         return (r, g, b);
-    }
-
-    private static async void Fade(Preset _preset, SequenceElement _seqEl, int _duration)
-    {
-        SequenceElement prevCommand;
-        prevCommand = _preset.Commands[_preset.Commands.IndexOf(_seqEl) - 1];
-        if (prevCommand.Type != 0)
-            prevCommand = _preset.Commands[_preset.Commands.IndexOf(_seqEl) - 2];
-
-        Light _light = CurrentBank.Lights.Find((item) => item.Id == prevCommand.LightId);
-
-        if (_light == null) return;
-        int _rCh = _light.startCh;
-        int _gCh = _light.startCh + 1;
-        int _bCh = _light.startCh + 2;
-        int _mCh = _light.startCh + 3;
-
-
-        string prevColor = prevCommand.Color;
-        string nextColor = _preset.Commands[_preset.Commands.IndexOf(_seqEl) + 1].Color;
-
-        (byte r1, byte g1, byte b1) = HexToRgb(prevColor);
-        (byte r2, byte g2, byte b2) = HexToRgb(nextColor);
-
-        float rStep = ((float)(r2 - r1) / _duration * 102);
-        float gStep = ((float)(g2 - g1) / _duration * 102);
-        float bStep = ((float)(b2 - b1) / _duration * 102);
-
-        sendToDMX(_mCh, 50);
-        while (_duration > 0)
-        {
-            r1 += (byte)rStep;
-            g1 += (byte)gStep;
-            b1 += (byte)bStep;
-            sendToDMX(_rCh, r1);
-            await Task.Delay(20);
-            sendToDMX(_gCh, g1);
-            await Task.Delay(20);
-            sendToDMX(_bCh, b1);
-            await Task.Delay(20);
-            _duration -= 100;
-            Console.WriteLine(_duration);
-        }
     }
 
     private static async void Fade(Preset _preset, SequenceElement _seqEl, int _duration)
