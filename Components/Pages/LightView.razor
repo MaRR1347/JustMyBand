@@ -431,11 +431,55 @@
         }
     }
 
+    private static async void Fade(Preset _preset, SequenceElement _seqEl, int _duration)
+    {
+        SequenceElement prevCommand;
+        prevCommand = _preset.Commands[_preset.Commands.IndexOf(_seqEl) - 1];
+        if (prevCommand.Type != 0)
+            prevCommand = _preset.Commands[_preset.Commands.IndexOf(_seqEl) - 2];
+
+        Light _light = CurrentBank.Lights.Find((item) => item.Id == prevCommand.LightId);
+
+        if (_light == null) return;
+        int _rCh = _light.startCh;
+        int _gCh = _light.startCh + 1;
+        int _bCh = _light.startCh + 2;
+        int _mCh = _light.startCh + 3;
+
+
+        string prevColor = prevCommand.Color;
+        string nextColor = _preset.Commands[_preset.Commands.IndexOf(_seqEl) + 1].Color;
+
+        (byte r1, byte g1, byte b1) = HexToRgb(prevColor);
+        (byte r2, byte g2, byte b2) = HexToRgb(nextColor);
+
+        float rStep = ((float)(r2 - r1) / _duration * 102);
+        float gStep = ((float)(g2 - g1) / _duration * 102);
+        float bStep = ((float)(b2 - b1) / _duration * 102);
+
+        sendToDMX(_mCh, 50);
+        while (_duration > 0)
+        {
+            r1 += (byte)rStep;
+            g1 += (byte)gStep;
+            b1 += (byte)bStep;
+            sendToDMX(_rCh, r1);
+            await Task.Delay(20);
+            sendToDMX(_gCh, g1);
+            await Task.Delay(20);
+            sendToDMX(_bCh, b1);
+            await Task.Delay(20);
+            _duration -= 100;
+            Console.WriteLine(_duration);
+        }
+    }
+
     //------------------------------------------   MIDI READ   ---------------------------------------------
     Timer _updateTimer;
     public static int COMPort = 10;
     public string MsgToArduino = "";
     public static SerialPortService? SerialPort;
+    public static bool IsConnected = false;
     public static int GotMsgDiode = 0;
     public static int LastMidiNote;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO.Ports;
 
 
@@ -8,7 +9,7 @@ namespace BlazorApp1
     {
         public string SerialPortValue { get; set; }
         
-        static SerialPort mySerialPort;
+        private SerialPort mySerialPort;
 
         public SerialPortService(string COMPort)
         {
@@ -20,7 +21,10 @@ namespace BlazorApp1
                 {
                     mySerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
                     try { mySerialPort.Open(); }
-                    catch { Console.WriteLine("Nie znaleziono portu"); }
+                    catch 
+                    { 
+                        throw new ArgumentException("Nie znaleziono portu");
+                    }
                 }
             }
             catch (UnauthorizedAccessException ex)
