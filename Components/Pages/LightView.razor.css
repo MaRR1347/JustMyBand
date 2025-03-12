@@ -1,4 +1,4 @@
-﻿﻿body {
+﻿body {
     margin: 10px !important;
     padding: 10px !important;
 }
@@ -10,7 +10,6 @@
     border: 0;
     border-radius: 5px;
 }
-
 .flex {
     display: flex;
 }
@@ -22,7 +21,6 @@ select {
     border-radius: 8px;
     outline: none;
 }
-
 option:hover {
     background-color: #ccc;
 }
@@ -39,15 +37,16 @@ option:hover {
 }
 
 .remove-light {
+    color: white;
     position: absolute;
-    top: -23px;
-    right: -50px;
+    right: -35px;
+    top: 0px;
     z-index: 11;
-    width: 35px;
+    width: 45px;
     height: 35px;
     border: 1px solid black;
-    border-radius: 50%;
-    background-color: #f00;
+    border-radius: 15px;
+    background-color: #c31815;
 }
 
 
@@ -65,7 +64,6 @@ option:hover {
     border: 1px solid #444;
     overflow-y: auto;
 }
-
     #preset-container > button {
         width: 150px;
         height: 50px;
@@ -86,21 +84,19 @@ option:hover {
     border-radius: 10px;
     cursor: pointer;
 }
-
-.preset-block-active {
-    outline: 3px solid #52b2e8;
-}
-
-.preset-block input {
-    width: 148px;
-    margin: auto;
-    padding: 4px;
-    border: none;
-    border-radius: 5px;
-    outline: none;
-    color: white;
-    background-color: #444;
-}
+    .preset-block-active {
+        outline: 3px solid #52b2e8;
+    }
+    .preset-block input {
+        width: 148px;
+        margin: auto;
+        padding: 4px;
+        border: none;
+        border-radius: 5px;
+        outline: none;
+        color: white;
+        background-color: #444;
+    }
 
 .color-preview {
     content: " ";
@@ -112,11 +108,12 @@ option:hover {
 }
 
 .remove-preset {
+    color: white;
     margin: auto;
     text-align: center;
     width: 30px;
     height: 30px;
-    background-color: red;
+    background-color: #c31815;
     border: 1px solid black;
     border-radius: 50px;
 }
@@ -125,7 +122,7 @@ option:hover {
         background-color: rgb(218, 0, 0);
     }
 
-.preview-next-preset {
+.preview-next-preset{
     background-color: #444;
     text-align: center;
     width: 30px;
@@ -140,7 +137,59 @@ option:hover {
     }
 
 /*--------------  SEQUENCE  --------------*/
+#sequence-container {
+    display: inline-block;
+}
+#sequence-elements ul, #sequence-tree ul {
+    list-style-type: none;
+    padding: 0;
+}
 
+    #sequence-elements li {
+
+    }
+
+    #sequence-tree ul {
+        display: flex;
+        flex-direction: column;
+    }
+    #sequence-tree li {
+        width: 350px;
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        background-color: #3A3A3A;
+        border-radius: 20px;
+        padding: 15px;
+        margin: 5px 0;
+    }
+        #sequence-tree li > span {
+            width: 100px;
+            text-align: right;
+            padding-right: 15px; 
+        }
+        #sequence-tree li > input {
+            height: 30px;
+            width: 80px;
+            cursor: pointer;
+        }
+        #sequence-tree li button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: 700;
+            border: 0;
+        }
+            #sequence-tree li > button{
+                margin-left: 15px;
+                color: white;
+                background-color: #c31815;
+            }
+            .rotate {
+                transform: rotate(90deg) scale(0.8);
+            }
+        
 
 
 

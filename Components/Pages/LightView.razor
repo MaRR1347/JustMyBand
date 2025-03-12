@@ -1,8 +1,7 @@
-﻿﻿
-@page "/lightview"
-
+﻿@page "/lightview"
 @rendermode InteractiveServer
-@using BlazorApp1
+@using BlazorApp1.Services
+@using BlazorApp1.Components.Nodes
 @inject NavigationManager NavigationManager
 
 @* @inject ReadSerialPortService ReadSerialPortService *@
@@ -36,20 +35,20 @@
                 @if (EditLightMode)
                 {
                     <div style='position: absolute; left: @(light.xPos)px; top: @(light.yPos)px;' draggable="true" @ondragstart="OnDragStart" @ondragend="(args) => OnDragEnd(args, light)">
-                        <button @onclick="() => RemoveLight(light.Id)" class="remove-light">X</button>
+                        <button @onclick="() => RemoveLight(light.Id)" class="remove-light">✖</button>
                         <Light LightId="@light.Id"
-                        LightName="@light.Name"
-                        EditMode=true
-                        startCh="@light.startCh"></Light>
+                               LightName="@light.Name"
+                               EditMode=true
+                               startCh="@light.startCh"></Light>
                     </div>
                 }
                 else
                 {
                     <div style='position: absolute; left: @(light.xPos)px; top: @(light.yPos)px;'>
                         <Light LightId="@light.Id"
-                        LightName="@light.Name"
-                        EditMode=false
-                        startCh="@light.startCh"></Light>
+                               LightName="@light.Name"
+                               EditMode=false
+                               startCh="@light.startCh"></Light>
                     </div>
                 }
                 <div>
@@ -81,13 +80,13 @@
 }
 
 <section class="flex">
-<div class="checkbox-wrapper-22">
-    <label class="switch">
-        <input type="checkbox" @bind=EditPresetsMode />
-        <span class="slider round"></span>
-    </label>
-</div>
-@if (EditPresetsMode)
+    <div class="checkbox-wrapper-22">
+        <label class="switch">
+            <input type="checkbox" @bind=EditPresetsMode />
+            <span class="slider round"></span>
+        </label>
+    </div>
+    @if (EditPresetsMode)
     {
         <button @onclick="AddPreset" class="normal-button">Dodaj Preset</button>
     }
@@ -106,7 +105,7 @@
                 <section class="@((CurrentPreset== preset)?"preset-block preset-block-active":"preset-block")" @onclick="() => SelectPreset(preset.Id)">
                     <input type="text" @bind-value=preset.Name @bind-value:event="oninput" @onchange="() => SavePresetsInfo(preset.Id, preset.Name)" />
                     <section class="flex">
-                        <button @onclick="() => RemovePreset(preset)" class="remove-preset">x</button>
+                        <button @onclick="() => RemovePreset(preset)" class="remove-preset">✖</button>
                         <button @onclick="() => ChangePresetsOrder(preset.Id, 0)" class="preview-next-preset"> &lt </button>
                         <button @onclick="() => ChangePresetsOrder(preset.Id, 1)" class="preview-next-preset"> &gt </button>
                     </section>
@@ -148,26 +147,26 @@
                 @foreach (var seqEl in SequenceList)
                 {
                     <li>
-                        <div>
-                            @if (seqEl.Type == 0)
-                            {
-                                <p>
-                                    @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
-                                    <input type="color" @bind="@seqEl.Color" />
-                                </p>
-                            }
-                            else if (seqEl.Type == 1)
-                            {
-                                <p>Czekaj: <input @bind-value=seqEl.Duration type="number" />ms</p>
-                            }
-                            else
-                            {
-                                <p>Fade: <input @bind-value=seqEl.Duration type="number" />ms</p>
-                            }
-                            <button @onclick="() => RemoveSequenceElement(seqEl)">x</button>
+                        @if (seqEl.Type == 0)
+                        {
+                            <span>@CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name</span>
+                            <input type="color" @bind="@seqEl.Color" />
+                        }
+                        else if (seqEl.Type == 1)
+                        {
+                            <span>Czekaj: </span>
+                            <input @bind-value=seqEl.Duration type="number" />
+                        }
+                        else
+                        {
+                            <span>Fade: </span>
+                            <input @bind-value=seqEl.Duration type="number" />
+                        }
+                        <button @onclick="() => RemoveSequenceElement(seqEl)">✖</button>
+                        <section class="rotate">
                             <button @onclick='() => ChangeSequenceOrder(seqEl, 0)'> &lt</button>
                             <button @onclick='() => ChangeSequenceOrder(seqEl, 1)'> &gt</button>
-                        </div>
+                        </section>
                     </li>
                 }
             </ul>
@@ -182,18 +181,18 @@
                         <div>
                             @if (seqEl.Type == 0)
                             {
-                                <p>
+                                <span>
                                     @CurrentBank.Lights.Find(item => item.Id == seqEl.LightId).Name
                                     <span class="color-preview" style="background-color: @seqEl.Color"> </span>
-                                </p>
+                                </span>
                             }
                             else if (seqEl.Type == 1)
                             {
-                                <p>Czekaj: @seqEl.Duration</p>
+                                <span>Czekaj: @seqEl.Duration</span>
                             }
                             else
                             {
-                                <p>Fade: @seqEl.Duration </p>
+                                <span>Fade: @seqEl.Duration </span>
                             }
                         </div>
                     </li>
@@ -214,7 +213,8 @@
 
     <section id="midi-preview" class="frame">
         <section id="midi-devices">
-            <p>Kanał: <input type="number" @bind-value=MIDIDevKey /> | Nazwa: <input type="text" @bind-value=MIDIDevName /> </p>
+            <section class="flex">Kanał: <input type="number" @bind-value=MIDIDevKey /></section>
+            <section class="flex">Nazwa: <input type="text" @bind-value=MIDIDevName /> </section>
             <button @onclick='DetectMIDIDevice' class="normal-button">Wykryj urządzenie</button>
             <button @onclick='AddToMIDIDevices' class="normal-button">Dodaj urządzenie</button>
             <section>
@@ -261,7 +261,6 @@
 <section id="midi-handler">
     <input type="number" @bind="COMPort" />
     <button @onclick="ConnectToArduino" class="normal-button">Połącz</button>
-    <p>@MsgFromArduino</p>
     @if (GotMsgDiode == 1)
     {
         <p style="height: 16px; width: 16px; border-radius: 50%; background-color: green;"></p>
@@ -270,6 +269,12 @@
     {
         <p style="height: 16px; width: 16px; border: 1px solid black; border-radius: 50%;"></p>
     }
+</section>
+
+<section>
+    <MidiListener />
+    <MidiNoteHandler />
+    <p>@LastMidiNote</p>
 </section>
 
 @code {
@@ -322,7 +327,6 @@
                     case 0:
                         Console.WriteLine("ŚWIAAAAAAATŁOOOOOOŚŚĆ");
                         Light _light = CurrentBank.Lights.Find((item) => item.Id == _seqEl.LightId);
-
 
                         int _mCh = _light.startCh + 3;
 
@@ -430,11 +434,10 @@
     //------------------------------------------   MIDI READ   ---------------------------------------------
     Timer _updateTimer;
     public static int COMPort = 10;
-    public static string MsgFromArduino = "";
     public string MsgToArduino = "";
     public static SerialPortService? SerialPort;
-    public static bool IsConnected = false;
     public static int GotMsgDiode = 0;
+    public static int LastMidiNote;
 
     protected async Task ConnectToArduino()
     {
@@ -449,7 +452,6 @@
         }
     }
 
-
     public static async void LightGotMsgDiode()
     {
         GotMsgDiode = 1;
@@ -457,7 +459,19 @@
         GotMsgDiode = 0;
     }
 
-    //----------------------------------------    MIDI SECTION    -----------------------------------------
+    public static async void setActiveMidiNote(int _note)
+    {
+        LastMidiNote = _note;
+        if (MIDIPresets.ContainsKey(_note))
+        {
+            if (MIDIPresets[_note] != null)
+                PresetOn(MIDIPresets[_note]);
+        }
+        LightGotMsgDiode();
+    }
+
+
+    //----------------------------------------    MIDI    -----------------------------------------
     //MIDI int => MIDI Channel, string => name
     public static Dictionary<int, string> MIDIDevices = new();
     public static int MIDIDevKey;
@@ -495,19 +509,10 @@
 
     public static void DetectMIDIDevice()
     {
-        if (MsgFromArduino != "")
-        {
-            string curMIDICh = "";
-            for (int i = 3; i < MsgFromArduino.Length; i++)
-            {
-                if (MsgFromArduino[i] == 'V')
-                    break;
-                else
-                    curMIDICh += MsgFromArduino[i];
-            }
-            MIDIDevKey = int.Parse(curMIDICh);
-        }
+        MIDIDevKey = LastMidiNote;
     }
+
+
 
     //-------------------------------------   MIDI ASSIGNMENT   -------------------------------------------
     //MIDI assignment. int = MIDI Channgel, int => preset Id

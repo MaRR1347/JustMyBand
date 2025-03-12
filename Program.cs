@@ -17,6 +17,8 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<JSONService>();
 builder.Services.AddSingleton<QueueService>();
 builder.Services.AddSingleton<SongService>();
+builder.Services.AddSingleton<MidiService>();
+builder.Services.AddSingleton<MidiCommunicationService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<CircuitOptions>(options => options.DetailedErrors = true);

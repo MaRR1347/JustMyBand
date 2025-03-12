@@ -1,0 +1,30 @@
+﻿@inject MidiCommunicationService MidiCommunicationService
+@using BlazorApp1.Components.Pages
+
+<h3>MIDI Note Handler</h3>
+
+<p>Last MIDI Note Received: @_lastMidiNote</p>
+
+@code {
+    private int _lastMidiNote;
+
+    protected override void OnInitialized()
+    {
+        // Subscribe to the MIDI note received event
+        MidiCommunicationService.OnMidiNoteReceived += HandleMidiNoteReceived;
+    }
+
+    private void HandleMidiNoteReceived(object sender, int noteNumber)
+    {
+        // Update the last MIDI note and refresh the UI
+        _lastMidiNote = noteNumber;
+        LightView.setActiveMidiNote(noteNumber);
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from the event to avoid memory leaks
+        MidiCommunicationService.OnMidiNoteReceived -= HandleMidiNoteReceived;
+    }
+}

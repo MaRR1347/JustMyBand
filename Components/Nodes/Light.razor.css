@@ -33,14 +33,17 @@ input[id^="edit-light"] {
     margin: 0;
 }
     input[id^="edit-light"]:checked {
+        top: 20px;
         background-color: #52b2e8;
         border: 20px;
-        width: 200px;
+        width: 180px;
         height: 150px;
         border-radius: 20px;
         transform: translateY(-12px);
     }
-    div input[type="submit"], div span, div input {
+    div input[type="submit"], div span:not(:last-child), div input {
+        position: relative;
+        top: 20px;
         z-index: 10;
     }
 
